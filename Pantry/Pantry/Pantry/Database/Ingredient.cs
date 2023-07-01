@@ -8,20 +8,30 @@ internal class Ingredient
 {
     internal static void CreateConnection()
     {
-        string connectionString = @"Data Source=Ingredient.db";
+        string connectionString = "Data Source=/home/zeref/Desktop/Projects/Pantry/Pantry/Pantry/Ingredients/Ingredient.db";
 
-        using var connection = new SqliteConnection(connectionString)
-        connection.Open();
-            
-        var tableCmd = connection.CreateCommand();
+        
+        // Create a new SQLite connection
+        using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+        {
+            // Open the connection
+            connection.Open();
 
-        tableCmd.CommandText =
-            @"CREATE TABLE Ingredients (
-                    Name TEXT PRIMARY KEY,
-                    )";
+            // Create a table if it doesn't already exist
+            string createTableQuery = "CREATE TABLE IF NOT EXISTS Ingredients (Name TEXT PRIMARY KEY)";
+            using (SQLiteCommand createTableCommand = new SQLiteCommand(createTableQuery, connection))
+            {
+                createTableCommand.ExecuteNonQuery();
+            }
 
-            tableCmd.ExecuteNonQuery();
+            // // Insert data into the table
+            // string insertQuery = "INSERT INTO TableName (Id, Name) VALUES (1, 'John Doe')";
+            // using (SQLiteCommand insertCommand = new SQLiteCommand(insertQuery, connection))
+            // {
+            //     insertCommand.ExecuteNonQuery();
+            // }
 
+            // Close the connection
             connection.Close();
         }
         Console.WriteLine("Connected to the database");
